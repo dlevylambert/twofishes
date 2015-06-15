@@ -514,8 +514,10 @@ object GeocodeFinagleServer extends Logging {
     // Convert the Thrift Processor to a Finagle Service
     val service = new Geocoder.Service(processor, new TBinaryProtocol.Factory())
 
+    val httpPort = config.httpPort.getOrElse(config.thriftServerPort + 1)
+
     logger.info("serving finagle-thrift on port %d".format(config.thriftServerPort))
-    logger.info("serving http/json on port %d".format(config.thriftServerPort + 1))
+    logger.info("serving http/json on port %d".format(httpPort))
     logger.info("serving debug info on port %d".format(config.thriftServerPort + 2))
     logger.info("serving slow query http/json on port %d".format(config.thriftServerPort + 3))
 
@@ -537,7 +539,7 @@ object GeocodeFinagleServer extends Logging {
 
     if (config.runHttpServer) {
       ServerBuilder()
-        .bindTo(new InetSocketAddress(config.host, config.thriftServerPort + 1))
+        .bindTo(new InetSocketAddress(config.host, httpPort))
         .codec(Http())
         .name("geocoder-http")
         .reportTo(new FoursquareStatsReceiver)

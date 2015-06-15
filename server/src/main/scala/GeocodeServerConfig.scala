@@ -4,6 +4,7 @@ package com.foursquare.twofishes
 case class GeocodeServerConfig(
   runHttpServer: Boolean = true,
   thriftServerPort: Int = 8080,
+  httpPort: Option[Int] = None,
   host: String = "0.0.0.0",
   hfileBasePath: String = "",
   shouldPreload: Boolean = true,
@@ -32,6 +33,9 @@ object GeocodeServerConfigParser {
           .action { (x, c) => c.copy(host = x) }
         opt[Int]('p', "port")
           .action { (x, c) => c.copy(thriftServerPort = x) }
+          .text("port to run thrift server on")
+        opt[Int]("httpPort")
+          .action { (x, c) => c.copy(httpPort = Some(x)) }
           .text("port to run thrift server on")
         opt[Boolean]('h', "run_http_server")
           .action { (x, c) => c.copy(runHttpServer = x) }
